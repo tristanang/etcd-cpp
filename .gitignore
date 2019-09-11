@@ -1,3 +1,6 @@
+# Protofiles
+include/etcd-cpp/protos
+
 # Prerequisites
 *.d
 
