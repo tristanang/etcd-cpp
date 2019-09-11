@@ -1,4 +1,5 @@
 #include "ClientBase.h"
+#include <grpc++/grpc++.h>
 
 namespace etcd
 {
@@ -34,11 +35,11 @@ ClientBase::ClientBase(const std::string &single_node)
 // Channel Connection Methods
 bool ClientBase::ConnectChannel(
     unsigned int connectTime,
-    const std::shared_ptr<grpc::ChannelCredentials> &creds)
+    const std::shared_ptr<grpc_impl::ChannelCredentials> &creds)
 {
     std::lock_guard<std::mutex> lock(mChannelMutex);
 
-    for (const auto &host : mNodes)
+    for (const std::string &host : mNodes)
     {
         channel = grpc::CreateChannel(host, creds);
 
@@ -52,10 +53,23 @@ bool ClientBase::ConnectChannel(
 
 bool ClientBase::ReconnectChannel(unsigned int connectTime)
 {
+    if (!channel) ConnectChannel(connectTime);
+
     std::lock_guard<std::mutex> lock(mChannelMutex);
     channel->GetState(true);
 
     return channel->WaitForConnected(timeSpec(connectTime));
+}
+
+const std::shared_ptr<grpc::ChannelInterface>& ClientBase::GetChannel()
+{
+    std::lock_guard<std::mutex> lock(mChannelMutex);
+    return channel;
+}
+
+const std::vector<std::string>& ClientBase::GetNodes() const
+{
+    return mNodes;
 }
 
 gpr_timespec timeSpec(unsigned int seconds)

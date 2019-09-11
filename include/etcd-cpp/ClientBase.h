@@ -1,16 +1,16 @@
 #pragma once
 
-#include <grpc++/grpc++.h>
+#include <grpcpp/impl/codegen/channel_interface.h>
+#include <grpcpp/security/credentials_impl.h>
 
-namespace etcd
-{
+namespace etcd {
 
 class ClientBase
 {
 public:
     // Constructors where we specify the port separately
-    ClientBase(const std::vector<std::string> &nodes, unsigned int port = 2379);
-    ClientBase(const std::string &single_node, unsigned int port = 2379);
+    ClientBase(const std::vector<std::string> &nodes, unsigned int port);
+    ClientBase(const std::string &single_node, unsigned int port);
     ClientBase(unsigned int port = 2379);
 
     // Constructors where the port is specified in nodes and single_node
@@ -18,13 +18,13 @@ public:
     ClientBase(const std::string &single_node);
 
     bool ConnectChannel(unsigned int connectTimeInSeconds = 5,
-                        const std::shared_ptr<grpc::ChannelCredentials> &creds =
-                        grpc::InsecureChannelCredentials());
+                        const std::shared_ptr<grpc_impl::ChannelCredentials> &creds =
+                        grpc_impl::InsecureChannelCredentials());
     bool ReconnectChannel(unsigned int connectTimeInSeconds = 5);
     // void DisconnectChannel(); // probably something to do with resetting ptr.
 
     // Accessors
-    const std::shared_ptr<grpc::ChannelInterface>& GetChannel() const;
+    const std::shared_ptr<grpc::ChannelInterface>& GetChannel();
     const std::vector<std::string>& GetNodes() const;
 
 protected:
