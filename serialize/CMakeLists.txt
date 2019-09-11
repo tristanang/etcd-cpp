@@ -1,18 +1,22 @@
-set(CMAKE_CXX_FLAGS "-Wall -std=c++11")
+set(CMAKE_CXX_FLAGS "-Wall -Werror -std=c++11")
 
 set(GRPC_DIR ${CMAKE_CURRENT_LIST_DIR})
 
-#find_package(Protobuf REQUIRED)
 find_package(GRPC REQUIRED)
 
 include_directories(${PROTOBUF_INCLUDE_DIR})
 
 file(GLOB PROTOS "*.proto")
 
-#protobuf_generate_cpp(PROTO_SRC PROTO_HEADER ${PROTOS})
 grpc_generate_cpp(GRPC_SRC GRPC_HEADER ${PROTOS})
 
 #Generate the static library from the sources
-add_library(serialize STATIC ${PROTO_HEADER} ${PROTO_SRC} ${GRPC_HEADER} ${GRPC_SRC})
+add_library(serialize STATIC ${GRPC_SRC})
 
-target_link_libraries(serialize ${GRPC++_LIBRARY})
+target_link_libraries(serialize ${GRPC++_LIBRARIES})
+
+file(MAKE_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}/../include/etcd-cpp/protos)
+
+#Custom command needs work
+add_custom_command(TARGET serialize PRE_LINK
+    COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_BINARY_DIR}/*.h ${CMAKE_CURRENT_LIST_DIR}/../include/etcd-cpp/protos)
