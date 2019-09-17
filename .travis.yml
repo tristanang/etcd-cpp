@@ -3,16 +3,15 @@ sudo: false
 language:
   - cpp
 
-dist: bionic
+os:
+  - osx
 
-before_install:
-  - sudo apt-get install -y grpc
-  - sudo apt-get install -y protobuf-compiler-grpc
-
-env:
-  - ETCD_VERSION_TO_TEST=v3.1.20
-  - ETCD_VERSION_TO_TEST=v3.2.25
-  - ETCD_VERSION_TO_TEST=v3.3.10
+addons:
+  homebrew:
+    packages:
+    - protobuf
+    - grpc
+    - etcd
 
 script:
   - mkdir build
