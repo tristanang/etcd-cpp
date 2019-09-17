@@ -6,6 +6,7 @@ language:
 dist: bionic
 
 before_install:
+  - sudo apt-get install -y grpc
   - sudo apt-get install -y protobuf-compiler-grpc
 
 env:
