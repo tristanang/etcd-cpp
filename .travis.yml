@@ -1,0 +1,22 @@
+sudo: false
+
+language:
+  - cpp
+
+env:
+  - ETCD_VERSION_TO_TEST=v3.1.20
+  - ETCD_VERSION_TO_TEST=v3.2.25
+  - ETCD_VERSION_TO_TEST=v3.3.10
+
+script:
+  - mkdir build
+  - cd build
+  - cmake ..
+  - cmake --build .
+  - ctest
+
+after_success:
+  - coveralls --root .. -E ".*external.*" -E ".*CMakeFiles.*" -E ".*test/.*.cpp.*"
+
+notifications:
+  email: false
