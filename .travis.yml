@@ -12,6 +12,10 @@ addons:
     - protobuf
     - grpc
     - etcd
+    update: true
+
+before_script:
+  - if [ "$TRAVIS_OS_NAME" = "osx" ]; then brew services start etcd ; fi
 
 script:
   - mkdir build
